@@ -1,7 +1,7 @@
 FROM node:16.18.0
 WORKDIR /app
 COPY package*.json ./
-RUM npm install
+RUN npm install
 COPY . .
 EXPOSE 8080
 CMD ["node", "server.js"]

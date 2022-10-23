@@ -6,11 +6,30 @@ pipeline{
        stage ('Build Docker Image') {
         steps ( 
             script {
-                dockerapp = docker.buiid("vbrancher/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile, ./src')
+                dockerapp = docker.buiid("VBRANCHER/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile, ./src')
             }
         )
 
     }
+    
+    stage('Push Docker Image'){
+        steps {
+            script{
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub' )
+                dockerapp.push('latest')
+                dockerapp.push("${env.BUILD_ID}")
+            }
+        }
+    }
+
+    stage ('Deploy Kubernetes') {
+
+        steps{
+            withKubeconfig ([credentialsID: 'kubeconfig'])       
+
+        }
+    }
+
 
     }
 
